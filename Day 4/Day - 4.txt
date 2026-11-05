@@ -1,0 +1,69 @@
+Topics - Callbacks, Promises, and async/await.
+
+1. What is synchronous vs asynchronous?
+Imagine you're in a restaurant.
+- Synchronous: You order food and stand there doing nothing until it's ready.
+- Asynchronous: You order food, sit down, and do something else while it's being prepared.
+Node.js works similarly.
+
+Synchronous code waits for one operation to finish before moving to the next.
+
+Asynchronous code allows Node.js to continue doing other work while waiting for a time-consuming operation.
+
+
+2. What are callbacks?
+A callback is simply a function passed as an argument to another function, which is called later.
+
+Callbacks are useful when something needs to happen after an operation finishes.
+
+
+3. What are Promises?
+Callbacks work, but managing many asynchronous operations with nested callbacks can become difficult.
+
+That's where Promises come in.
+
+A Promise represents a result that may become available in the future.
+
+A Promise has three states:
+Pending : The operation hasn't finished yet.
+Fulfilled : The operation completed successfully.
+Rejected : Something went wrong.
+
+
+Let's understand the important terms:
+- resolve() means the operation succeeded.
+- reject() means the operation failed.
+- .then() handles a successful result.
+- .catch() handles an error.
+
+
+4. What is async/await?
+This is one of the most useful features you'll use in modern Node.js development.
+
+async/await makes asynchronous code easier to read.
+
+Instead of writing .then() and .catch(), you can write code that looks more like normal synchronous code.
+
+
+Understand these two keywords:
+- async: Declares an asynchronous function. An async function always returns a Promise.
+- await: Waits for a Promise to settle and gives you its fulfilled value (or throws its rejection).
+Important: await pauses the execution of that async function, not the entire Node.js application.
+
+
+What happens if a Promise gets rejected?
+
+We can handle it using try/catch.
+
+
+6. Today's quick revision
+Concept	Meaning
+Synchronous	Executes and waits for each operation
+Asynchronous	Allows other work while waiting
+Callback	Function passed to another function
+Promise	Represents a future result
+resolve()	Promise succeeds
+reject()	Promise fails
+async	Declares an asynchronous function
+await	Waits for a Promise inside an async function
+try/catch	Handles errors

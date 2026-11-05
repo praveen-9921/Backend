@@ -1,0 +1,72 @@
+{
+  "logs": [
+    {
+      "id": "1793555384085",
+      "date": "2026-10-30",
+      "subject": "Backend",
+      "topic": "Fundaementals",
+      "durationMinutes": 120,
+      "focus": 4,
+      "notes": "Node.js basics, process.argv, built-in modules, FS, OS"
+    },
+    {
+      "id": "1793555562283",
+      "date": "2026-10-31",
+      "subject": "Backend",
+      "topic": "Modules",
+      "durationMinutes": 90,
+      "focus": 4,
+      "notes": "Modules, require, module.exports, exports"
+    },
+    {
+      "id": "1793555933876",
+      "date": "2026-11-01",
+      "subject": "Backend",
+      "topic": "NPM and Pacakage",
+      "durationMinutes": 90,
+      "focus": 4,
+      "notes": "npm, packages, package.json, npm scripts"
+    },
+    {
+      "id": "1793640475663",
+      "date": "2026-11-02",
+      "subject": "Backend",
+      "topic": "Callbacks, Promises, and async/await.",
+      "durationMinutes": 60,
+      "focus": 4,
+      "notes": "Callbacks, Promises, and async/await."
+    },
+    {
+      "id": "1793728151978",
+      "date": "2026-11-03",
+      "subject": "Backend",
+      "topic": "HTTP",
+      "durationMinutes": 90,
+      "focus": 4,
+      "notes": "HTTP fundamentals and create Server"
+    },
+    {
+      "id": "1793815076934",
+      "date": "2026-11-04",
+      "subject": "Backend",
+      "topic": "Express",
+      "durationMinutes": 60,
+      "focus": 4,
+      "notes": "Express.js fundamentals"
+    },
+    {
+      "id": "1793899224936",
+      "date": "2026-11-05",
+      "subject": "Backend",
+      "topic": "Routes",
+      "durationMinutes": 120,
+      "focus": 4,
+      "notes": "Express Routes, Route Parameters & Query Parameters"
+    }
+  ],
+  "targets": {
+    "daily": 2,
+    "weekly": 16
+  },
+  "theme": "dark"
+}

@@ -1,0 +1,82 @@
+1. What is npm?
+So far, we've written our own JavaScript functions and created our own modules.
+
+But imagine you want to build an application that can:
+- Generate random passwords.
+- Format dates.
+- Connect to a database.
+- Create an HTTP server.
+- Validate email addresses.
+Do you need to write everything yourself?
+
+No! Other developers have already created reusable code that you can use in your projects.
+
+These reusable pieces of code are called packages.
+
+
+npm stands for Node Package Manager.
+
+It allows you to:
+- Install packages.
+- Uninstall packages.
+- Update packages.
+- Manage project dependencies.
+
+
+2. What is package.json?
+This is one of the most important files in a Node.js project.
+
+Imagine your project has 20 different packages installed.
+
+How will Node.js know which packages your project needs?
+
+That's one of the jobs of package.json.
+
+It stores important information about your project, including:
+- Project name.
+- Version.
+- Description.
+- Main entry file.
+- Dependencies (installed packages).
+- Scripts (commands you define).
+
+
+Package json
+Property =	    Meaning
+name	 =      Project name
+version	 =      Project version
+main	 =      Main entry file
+scripts	 =      Custom commands
+dependencies =	Packages required by the project
+
+
+validator(package)
+
+A JavaScript library for validating strings, including emails and URLs.
+
+
+Important: Don't manually edit files inside node_modules. npm manages that folder.
+
+
+The difference:
+- ./math → your local file.
+- validator → an installed package that Node.js resolves from your project's dependencies.
+
+Uninstall package
+npm uninstall validator
+
+7. What are npm scripts?
+Remember the scripts property inside package.json?
+
+We can use it to create our own commands.
+
+Open package.json and change the scripts section:
+
+
+
+npm reads your project's package.json and package-lock.json, then downloads the required dependencies into the node_modules folder.
+
+One small additional detail:
+- package.json tells npm which dependencies the project needs.
+- package-lock.json records the exact dependency versions and their dependency tree.
+- node_modules contains the installed packages.

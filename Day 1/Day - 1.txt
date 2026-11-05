@@ -1,0 +1,111 @@
+1. What is Node.js?
+Node.js is a JavaScript runtime environment that allows us to execute JavaScript outside a web browser.
+
+Normally, JavaScript runs inside browsers like Chrome to make websites interactive.
+
+But what if we want JavaScript to:
+- Connect to a database.
+- Create and manage users.
+- Handle login and registration.
+- Process payments.
+- Build APIs.
+- Manage server requests and responses.
+That's where Node.js comes in!
+
+
+2. How does Node.js work?
+Imagine you're using a website to log in.
+1. You enter your username and password.
+2. The frontend sends a request to the backend.
+3. Node.js receives the request.
+4. The backend checks the credentials in the database.
+5. Node.js sends a response.
+6. The frontend displays the result.
+
+
+3. Important things to know
+Term	Meaning
+Node.js	Runs JavaScript outside browsers
+npm	Package manager for Node.js
+Backend	Handles server-side operations
+API	Allows applications to communicate
+Server	Receives and processes requests
+Database	Stores application data
+
+One important thing: Node.js is not a programming language. JavaScript is the language; Node.js is the environment that runs it.
+
+
+Example :
+
+let name = process.argv[2];
+let age = process.argv[3];
+
+console.log("Your name is: " + name);
+console.log("Your age is: " + age);
+
+Understand this:
+- process is a built-in Node.js object.
+- argv contains command-line arguments.
+- [2] gets the first argument you provide.
+- [3] gets the second argument.
+The first two array positions are reserved for Node.js and the file path.
+
+
+
+
+
+
+
+
+
+Day 1 — Part 2: Node.js Built-in Modules
+1. What are modules?
+Think of modules as ready-made tools that provide specific functionality.
+
+For example:
+- Want to work with files? Use fs.
+- Want to create a server? Use http.
+- Want to work with file paths? Use path.
+- Want information about your computer's operating system? Use os.
+
+// Create a file
+fs.writeFileSync("message.txt", "Hello Node.js!");
+
+// Read a file
+const data = fs.readFileSync("message.txt", "utf8");
+
+// Update a file
+fs.appendFileSync("message.txt", "\nLearning Backend Development!");
+
+// Delete a file
+fs.unlinkSync("message.txt");
+
+Notice utf8. It tells Node.js to return readable text instead of raw binary data.
+
+Synchronous execution
+1. Start operation
+2. Read file and wait
+3. File reading completed
+4. Execute next operation
+
+Asynchronous execution
+1. Start operation
+2. Start reading file in the background
+3. Execute next operation immediately
+4. File reading completes and callback executes
+
+
+Function	            Purpose
+fs.writeFileSync()	    Create/write a file
+fs.readFileSync()	    Read a file
+fs.appendFileSync()	    Add content to a file
+fs.unlinkSync()	        Delete a file
+os.platform()	        Get operating system
+os.arch()	            Get CPU architecture
+os.totalmem()	        Get total memory
+os.freemem()	        Get free memory
+
+
+5. Synchronous vs Asynchronous
+- Sync: waits until the operation finishes.
+- Async: allows other code to continue while the operation is running.

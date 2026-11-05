@@ -1,0 +1,44 @@
+1. What are modules?
+Imagine you're building a large Node.js application.
+
+If you write all your code in one file, such as app.js, it can become very difficult to manage.
+
+For example, imagine your application has:
+- Calculator functions
+- User-related functions
+- Authentication functions
+- Payment functions
+- Message functions
+
+Putting everything into one file makes the code messy.
+
+Modules solve this problem.
+
+A module is simply a separate JavaScript file that contains code for a particular purpose.
+
+Each file has its own responsibility.
+
+But here's an important question:
+
+How can we use a function written in calculator.js inside app.js?
+
+That's where export and require() come in.
+
+
+Remember this:
+Keyword	Purpose
+module.exports =	Export something
+require()	   =    Import something
+
+
+
+For now, remember that exports.add = add is another way to add a property to the exported object.
+
+Important: exports and module.exports are connected initially, but don't do exports = something to replace the exported module. Use module.exports when replacing the whole export.
+
+
+. Important keywords
+Keyword	Purpose
+module.exports	Export values
+require()	    Import modules
+exports	        Add properties to exported object

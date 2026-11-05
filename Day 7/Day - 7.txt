@@ -1,0 +1,56 @@
+1. What are routes?
+A route is simply a path on your website that tells Express what to do when someone visits it.
+
+For example, in an online shopping website:
+URL	Purpose
+/	            Home page
+/products	    All products
+/products/101	Product with ID 101
+/users/5	    User with ID 5
+
+
+2. Route parameters (req.params)
+Imagine a shopping website has these products:
+- /products/101
+- /products/102
+- /products/103
+Instead of creating separate routes, we can create one dynamic route.
+
+Look at :id.
+The colon means that id is a dynamic parameter.
+
+
+Important: Route parameter values are strings by default. If you need a number, use Number().
+
+
+3. Query parameters (req.query)
+Now imagine you're shopping for mobile phones.
+
+You want to:
+- Search for Samsung phones.
+- Filter products by category.
+- Sort products by price.
+How can we send these extra details to our server?
+
+We use query parameters.
+
+Example URL : http://localhost:3000/products?category=mobile&brand=samsung
+Notice the ? after /products.
+
+Everything after ? contains query parameters.
+
+You can have multiple query parameters by separating them with &.
+
+4. Route parameters vs Query parameters
+
+This is one of the most important things to understand today.
+
+Route parameters	                    Query parameters
+req.params	                            req.query
+Part of the URL path	                After ?
+Usually identify a specific resource	Usually filter, search or sort
+/products/101	                        /products?category=mobile
+
+Think about it this way:
+- Route parameter: Which product do you want?
+- Query parameter: What kind of products do you want to see?

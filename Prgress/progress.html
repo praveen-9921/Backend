@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPulse - Interactive Study Tracker</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Canvas Confetti for goal completion celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom CSS for subtle animations & scrollbars -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700/60 px-4 sm:px-8 py-3.5 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="p-2 bg-indigo-600 rounded-xl text-white shadow-md shadow-indigo-500/20">
+        <i data-lucide="book-open" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h1 class="font-bold text-xl tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+          StudyPulse
+          <span class="text-xs bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 font-semibold px-2 py-0.5 rounded-full border border-indigo-200 dark:border-indigo-800">Pro</span>
+        </h1>
+        <p class="text-xs text-slate-500 dark:text-slate-400">Track, analyze, and master your learning</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Header Buttons -->
+    <div class="flex items-center space-x-2 sm:space-x-3">
+      <!-- Dark/Light Theme Toggle -->
+      <button id="themeToggleBtn" aria-label="Toggle dark mode" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors">
+        <i data-lucide="sun" id="sunIcon" class="w-5 h-5 hidden"></i>
+        <i data-lucide="moon" id="moonIcon" class="w-5 h-5 hidden"></i>
+      </button>
+
+      <!-- Import/Export Menu Trigger -->
+      <div class="relative">
+        <button id="dataMenuBtn" class="flex items-center space-x-1.5 px-3 py-2 text-sm font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors">
+          <i data-lucide="database" class="w-4 h-4 text-indigo-500"></i>
+          <span class="hidden sm:inline">Data</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60"></i>
+        </button>
+
+        <!-- Dropdown menu -->
+        <div id="dataDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-1.5 z-50 text-sm">
+          <button id="exportBtn" class="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center space-x-2 text-slate-700 dark:text-slate-200">
+            <i data-lucide="download" class="w-4 h-4 text-emerald-500"></i>
+            <span>Export Backup (JSON)</span>
+          </button>
+          <label class="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center space-x-2 text-slate-700 dark:text-slate-200 cursor-pointer">
+            <i data-lucide="upload" class="w-4 h-4 text-blue-500"></i>
+            <span>Import Data (JSON)</span>
+            <input type="file" id="importInput" accept=".json" class="hidden">
+          </label>
+          <hr class="my-1 border-slate-200 dark:border-slate-700">
+          <button id="clearDataBtn" class="w-full text-left px-4 py-2 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center space-x-2">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+            <span>Reset All Data</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Add Log Button -->
+      <button id="openLogModalBtn" class="flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] active:scale-95">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        <span>Log Study</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Top Key Metrics Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Metric 1: Total Study Hours -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Time Studied</p>
+          <h3 id="statTotalHours" class="text-2xl font-bold mt-1 text-slate-900 dark:text-white">0 hrs</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="statTotalSessions">0 sessions completed</p>
+        </div>
+        <div class="p-3 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl text-indigo-600 dark:text-indigo-400">
+          <i data-lucide="clock" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Metric 2: Current Streak -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Study Streak</p>
+          <h3 id="statStreak" class="text-2xl font-bold mt-1 text-slate-900 dark:text-white">0 Days 🔥</h3>
+          <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1" id="statStreakSub font-semibold">Keep the momentum going!</p>
+        </div>
+        <div class="p-3 bg-amber-50 dark:bg-amber-950/50 rounded-xl text-amber-500">
+          <i data-lucide="flame" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Metric 3: Daily Avg -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Daily Average</p>
+          <h3 id="statDailyAvg" class="text-2xl font-bold mt-1 text-slate-900 dark:text-white">0 hrs</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Based on active days</p>
+        </div>
+        <div class="p-3 bg-blue-50 dark:bg-blue-950/50 rounded-xl text-blue-600 dark:text-blue-400">
+          <i data-lucide="trending-up" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+      <!-- Metric 4: Average Focus -->
+      <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Avg Focus Score</p>
+          <h3 id="statAvgFocus" class="text-2xl font-bold mt-1 text-slate-900 dark:text-white">0.0 / 5</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="statFocusText">Productivity rating</p>
+        </div>
+        <div class="p-3 bg-purple-50 dark:bg-purple-950/50 rounded-xl text-purple-600 dark:text-purple-400">
+          <i data-lucide="zap" class="w-6 h-6"></i>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Middle Section: Pomodoro Timer & Target Goals Split -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Interactive Pomodoro & Stopwatch Widget -->
+      <div class="lg:col-span-1 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="timer" class="w-5 h-5 text-indigo-500"></i>
+              Live Timer
+            </h2>
+            <div class="flex bg-slate-100 dark:bg-slate-700/70 p-1 rounded-xl text-xs font-semibold">
+              <button id="modePomo" class="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all">Pomodoro</button>
+              <button id="modeStopwatch" class="px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all">Stopwatch</button>
+            </div>
+          </div>
+
+          <!-- Timer Dial Display -->
+          <div class="relative my-4 flex flex-col items-center justify-center">
+            <div class="w-44 h-44 rounded-full border-4 border-indigo-100 dark:border-slate-700 flex flex-col items-center justify-center relative shadow-inner">
+              <span id="timerDisplay" class="text-4xl font-extrabold tracking-tight font-mono text-slate-900 dark:text-white">25:00</span>
+              <span id="timerSubtext" class="text-xs text-slate-400 dark:text-slate-500 mt-1 font-medium">Focus Session</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timer Control Buttons -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-center space-x-3">
+            <button id="startTimerBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md shadow-indigo-500/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              <span>Start</span>
+            </button>
+            <button id="pauseTimerBtn" class="hidden flex-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md shadow-amber-500/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+              <i data-lucide="pause" class="w-4 h-4 fill-current"></i>
+              <span>Pause</span>
+            </button>
+            <button id="resetTimerBtn" class="p-2.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-xl transition-colors" title="Reset">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <button id="saveTimerLogBtn" class="w-full py-2 px-3 text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl hover:bg-emerald-100 dark:hover:bg-emerald-900/60 transition-colors flex items-center justify-center gap-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Log Elapsed Time as Session</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Target Goals Card -->
+      <div class="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i data-lucide="target" class="w-5 h-5 text-indigo-500"></i>
+              Study Target Goals
+            </h2>
+            <button id="editGoalsBtn" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium flex items-center gap-1">
+              <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+              Adjust Targets
+            </button>
+          </div>
+
+          <div class="space-y-6 my-2">
+            <!-- Daily Goal Progress Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-semibold mb-1.5">
+                <span class="text-slate-700 dark:text-slate-300">Daily Target</span>
+                <span id="dailyGoalText" class="text-slate-900 dark:text-white">0 / 4 hrs (0%)</span>
+              </div>
+              <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-3.5 overflow-hidden">
+                <div id="dailyGoalBar" class="bg-indigo-600 h-3.5 rounded-full transition-all duration-500 w-0"></div>
+              </div>
+            </div>
+
+            <!-- Weekly Goal Progress Bar -->
+            <div>
+              <div class="flex justify-between text-sm font-semibold mb-1.5">
+                <span class="text-slate-700 dark:text-slate-300">Weekly Target</span>
+                <span id="weeklyGoalText" class="text-slate-900 dark:text-white">0 / 25 hrs (0%)</span>
+              </div>
+              <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-3.5 overflow-hidden">
+                <div id="weeklyGoalBar" class="bg-emerald-500 h-3.5 rounded-full transition-all duration-500 w-0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Encouragement Banner -->
+        <div id="goalMotivationBox" class="mt-4 p-3.5 bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 rounded-xl flex items-center space-x-3 text-xs text-indigo-900 dark:text-indigo-200">
+          <i data-lucide="sparkles" class="w-5 h-5 text-amber-500 flex-shrink-0"></i>
+          <span>Set realistic daily targets to build consistency over intensity! You've got this!</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts & Visualization Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Subject Breakdown Chart Card -->
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex flex-col">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-500"></i>
+          Time by Subject
+        </h2>
+        <div class="relative flex-grow min-h-[240px] flex items-center justify-center">
+          <canvas id="subjectChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Weekly Trend Chart Card -->
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm flex flex-col">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+          <i data-lucide="bar-chart-3" class="w-5 h-5 text-indigo-500"></i>
+          Daily Study Trend (Last 7 Days)
+        </h2>
+        <div class="relative flex-grow min-h-[240px] flex items-center justify-center">
+          <canvas id="trendChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Study Logs Table & History Section -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm overflow-hidden">
+      
+      <!-- Table Filter / Header Controls -->
+      <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <i data-lucide="list-todo" class="w-5 h-5 text-indigo-500"></i>
+            Study Sessions Log
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">View and manage all recorded study entries</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Search input -->
+          <div class="relative flex-grow sm:flex-grow-0">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input type="text" id="searchInput" placeholder="Search topic or subject..." class="w-full sm:w-48 pl-9 pr-3 py-1.5 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </div>
+
+          <!-- Filter Subject -->
+          <select id="filterSubject" class="py-1.5 px-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">All Subjects</option>
+          </select>
+
+          <!-- Filter Date Range -->
+          <select id="filterDateRange" class="py-1.5 px-3 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="ALL">All Time</option>
+            <option value="7">Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Logs Table View -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+          <thead class="bg-slate-50 dark:bg-slate-900/50 text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">
+            <tr>
+              <th scope="col" class="px-5 py-3.5">Date</th>
+              <th scope="col" class="px-5 py-3.5">Subject & Topic</th>
+              <th scope="col" class="px-5 py-3.5">Duration</th>
+              <th scope="col" class="px-5 py-3.5">Focus</th>
+              <th scope="col" class="px-5 py-3.5">Notes</th>
+              <th scope="col" class="px-5 py-3.5 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="logTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/60">
+            <!-- Dynamic Log Rows will be rendered here -->
+          </tbody>
+        </table>
+        
+        <!-- Empty State Message -->
+        <div id="emptyLogState" class="hidden py-12 flex flex-col items-center justify-center text-center">
+          <div class="p-3 bg-slate-100 dark:bg-slate-700/50 rounded-full text-slate-400 mb-3">
+            <i data-lucide="book-open-check" class="w-8 h-8"></i>
+          </div>
+          <p class="font-semibold text-slate-700 dark:text-slate-300">No study logs found</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xs">Start logging your study sessions to track progress over time!</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-6 text-center text-xs text-slate-400 border-t border-slate-200 dark:border-slate-800">
+    <p>© StudyPulse • Local Browser Storage • Stay Focused & Consistent</p>
+  </footer>
+
+  <!-- MODAL 1: Add / Edit Log Entry Modal -->
+  <div id="logModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-lg w-full shadow-2xl p-4 sm:p-6 relative my-auto max-h-[90vh] flex flex-col">
+      
+      <!-- Modal Fixed Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60 mb-4 flex-shrink-0">
+        <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white">Log Study Session</h3>
+        <button id="closeLogModalBtn" type="button" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Scrollable Form Body -->
+      <form id="logForm" class="space-y-4 overflow-y-auto pr-1 flex-grow">
+        <input type="hidden" id="editLogId" value="">
+
+        <!-- Date input -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Date</label>
+          <input type="date" id="logDate" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <!-- Subject Input (With Autocomplete Options) -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Subject</label>
+          <input type="text" id="logSubject" placeholder="e.g. Mathematics, Physics, History" required list="subjectSuggestions" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+          <datalist id="subjectSuggestions"></datalist>
+        </div>
+
+        <!-- Topic/Title -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Topic / Specific Activity</label>
+          <input type="text" id="logTopic" placeholder="e.g. Chapter 4 Exercises" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <!-- Duration Inputs -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Hours</label>
+            <input type="number" id="logHours" min="0" max="24" value="1" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Minutes</label>
+            <input type="number" id="logMinutes" min="0" max="59" value="0" step="5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+        </div>
+
+        <!-- Focus Rating -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Focus / Productivity Level</label>
+          <div class="flex items-center space-x-2">
+            <input type="range" id="logFocus" min="1" max="5" value="4" class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+            <span id="focusRatingBadge" class="text-sm font-bold text-indigo-600 dark:text-indigo-400 w-12 text-center bg-indigo-50 dark:bg-indigo-950/60 py-1 rounded-lg">4 / 5</span>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Notes / Key Takeaways</label>
+          <textarea id="logNotes" rows="2" placeholder="Optional details..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none resize-none"></textarea>
+        </div>
+
+        <!-- Modal Fixed Action Buttons -->
+        <div class="flex justify-end space-x-3 pt-3 border-t border-slate-100 dark:border-slate-700/60 mt-4 flex-shrink-0">
+          <button type="button" id="cancelLogModalBtn" class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all">Save Session</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Goal Target Settings Modal -->
+  <div id="goalsModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-sm w-full shadow-2xl p-4 sm:p-6 relative my-auto max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-700/60 mb-4 flex-shrink-0">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Set Target Goals</h3>
+        <button id="closeGoalsModalBtn" type="button" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="goalsForm" class="space-y-4 overflow-y-auto pr-1 flex-grow">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Daily Study Target (Hours)</label>
+          <input type="number" id="targetDailyHours" min="0.5" max="24" step="0.5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Weekly Study Target (Hours)</label>
+          <input type="number" id="targetWeeklyHours" min="1" max="168" step="1" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-3 border-t border-slate-100 dark:border-slate-700/60 mt-4 flex-shrink-0">
+          <button type="button" id="cancelGoalsModalBtn" class="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">Cancel</button>
+          <button type="submit" class="px-5 py-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all">Save Goals</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border border-slate-700 dark:border-slate-200">
+    <i data-lucide="check-circle-2" id="toastIcon" class="w-5 h-5 text-emerald-400 dark:text-emerald-600 flex-shrink-0"></i>
+    <span id="toastMessage" class="text-sm font-medium">Notification message</span>
+  </div>
+
+  <!-- Application Logic JS -->
+  <script>
+    // State Data Management
+    const STORAGE_KEY = 'studypulse_app_data_v1';
+    
+    let appState = {
+      logs: [],
+      targets: {
+        daily: 4,
+        weekly: 25
+      },
+      theme: 'dark'
+    };
+
+    // Global Timer State
+    let timerState = {
+      mode: 'pomodoro', // 'pomodoro' | 'stopwatch'
+      isRunning: false,
+      secondsRemaining: 25 * 60,
+      stopwatchSeconds: 0,
+      intervalId: null
+    };
+
+    // Chart Instances
+    let subjectChartInstance = null;
+    let trendChartInstance = null;
+
+    // --- DOM Elements Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadDataFromLocalStorage();
+      initializeTheme();
+      setDefaultDate();
+      setupEventListeners();
+      renderAll();
+    });
+
+    // --- Local Storage Management ---
+    function loadDataFromLocalStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          appState = { ...appState, ...parsed };
+        } catch (e) {
+          console.error("Error reading localStorage:", e);
+        }
+      } else {
+        // Start completely clean without sample data
+        appState.logs = [];
+        saveDataToLocalStorage();
+      }
+    }
+
+    function saveDataToLocalStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+    }
+
+    function getDemoData() {
+      const today = new Date();
+      const formatDate = (daysAgo) => {
+        const d = new Date(today);
+        d.setDate(d.getDate() - daysAgo);
+        return d.toISOString().split('T')[0];
+      };
+
+      return [
+        { id: '1', date: formatDate(0), subject: 'Mathematics', topic: 'Calculus Derivatives', durationMinutes: 120, focus: 5, notes: 'Mastered chain rule exercises.' },
+        { id: '2', date: formatDate(1), subject: 'Computer Science', topic: 'Data Structures Algorithms', durationMinutes: 90, focus: 4, notes: 'Implemented Binary Search Trees.' },
+        { id: '3', date: formatDate(2), subject: 'Physics', topic: 'Thermodynamics Laws', durationMinutes: 60, focus: 3, notes: 'Reviewed textbook chapter 3.' },
+        { id: '4', date: formatDate(3), subject: 'Mathematics', topic: 'Linear Algebra', durationMinutes: 150, focus: 4, notes: 'Matrix multiplication problems.' },
+        { id: '5', date: formatDate(4), subject: 'English Literature', topic: 'Essay Outline Draft', durationMinutes: 45, focus: 4, notes: 'Created thesis statement.' }
+      ];
+    }
+
+    // --- Theme Controller ---
+    function initializeTheme() {
+      const htmlEle = document.documentElement;
+      if (appState.theme === 'dark') {
+        htmlEle.classList.add('dark');
+        document.getElementById('sunIcon').classList.remove('hidden');
+        document.getElementById('moonIcon').classList.add('hidden');
+      } else {
+        htmlEle.classList.remove('dark');
+        document.getElementById('moonIcon').classList.remove('hidden');
+        document.getElementById('sunIcon').classList.add('hidden');
+      }
+    }
+
+    function toggleTheme() {
+      appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
+      saveDataToLocalStorage();
+      initializeTheme();
+      renderCharts(); // Re-render charts for appropriate dark/light theme contrast
+    }
+
+    function setDefaultDate() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('logDate').value = today;
+    }
+
+    // --- Core UI Renderer ---
+    function renderAll() {
+      renderDashboardMetrics();
+      renderGoals();
+      renderSubjectDropdownFilters();
+      renderLogTable();
+      renderCharts();
+    }
+
+    // --- 1. Metrics Calculation ---
+    function renderDashboardMetrics() {
+      const totalMinutes = appState.logs.reduce((acc, log) => acc + Number(log.durationMinutes), 0);
+      const totalHours = (totalMinutes / 60).toFixed(1);
+      
+      document.getElementById('statTotalHours').innerText = `${totalHours} hrs`;
+      document.getElementById('statTotalSessions').innerText = `${appState.logs.length} sessions logged`;
+
+      // Streak Calculation
+      const uniqueDates = [...new Set(appState.logs.map(log => log.date))].sort().reverse();
+      const currentStreak = calculateStreak(uniqueDates);
+      document.getElementById('statStreak').innerText = `${currentStreak} Days 🔥`;
+
+      // Daily Average (Active days)
+      const activeDaysCount = uniqueDates.length || 1;
+      const dailyAvgHours = (totalHours / activeDaysCount).toFixed(1);
+      document.getElementById('statDailyAvg').innerText = `${dailyAvgHours} hrs`;
+
+      // Avg Focus Rating
+      if (appState.logs.length > 0) {
+        const sumFocus = appState.logs.reduce((acc, log) => acc + Number(log.focus || 3), 0);
+        const avgFocus = (sumFocus / appState.logs.length).toFixed(1);
+        document.getElementById('statAvgFocus').innerText = `${avgFocus} / 5`;
+      } else {
+        document.getElementById('statAvgFocus').innerText = `0.0 / 5`;
+      }
+    }
+
+    function calculateStreak(sortedDates) {
+      if (sortedDates.length === 0) return 0;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const yesterdayDate = new Date();
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      const yesterdayStr = yesterdayDate.toISOString().split('T')[0];
+
+      // Check if logged today or yesterday to keep streak active
+      if (sortedDates[0] !== todayStr && sortedDates[0] !== yesterdayStr) {
+        return 0;
+      }
+
+      let streak = 0;
+      let checkDate = new Date(sortedDates[0]);
+
+      for (let i = 0; i < sortedDates.length; i++) {
+        const d = new Date(sortedDates[i]);
+        const diffDays = Math.round((checkDate - d) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 0 || diffDays === 1) {
+          streak++;
+          checkDate = d;
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    // --- 2. Goals Renderer ---
+    function renderGoals() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayMinutes = appState.logs
+        .filter(l => l.date === todayStr)
+        .reduce((sum, l) => sum + Number(l.durationMinutes), 0);
+      const todayHours = todayMinutes / 60;
+
+      const targetDaily = appState.targets.daily;
+      const dailyPct = Math.min(Math.round((todayHours / targetDaily) * 100), 100);
+
+      document.getElementById('dailyGoalText').innerText = `${todayHours.toFixed(1)} / ${targetDaily} hrs (${dailyPct}%)`;
+      const dailyBar = document.getElementById('dailyGoalBar');
+      dailyBar.style.width = `${dailyPct}%`;
+      
+      if (dailyPct >= 100) {
+        dailyBar.classList.remove('bg-indigo-600');
+        dailyBar.classList.add('bg-emerald-500');
+      } else {
+        dailyBar.classList.add('bg-indigo-600');
+        dailyBar.classList.remove('bg-emerald-500');
+      }
+
+      // Weekly Goal Calculation (Last 7 Days)
+      const now = new Date();
+      const sevenDaysAgo = new Date(now);
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const weeklyMinutes = appState.logs
+        .filter(l => new Date(l.date) >= sevenDaysAgo)
+        .reduce((sum, l) => sum + Number(l.durationMinutes), 0);
+      const weeklyHours = weeklyMinutes / 60;
+      const targetWeekly = appState.targets.weekly;
+      const weeklyPct = Math.min(Math.round((weeklyHours / targetWeekly) * 100), 100);
+
+      document.getElementById('weeklyGoalText').innerText = `${weeklyHours.toFixed(1)} / ${targetWeekly} hrs (${weeklyPct}%)`;
+      document.getElementById('weeklyGoalBar').style.width = `${weeklyPct}%`;
+    }
+
+    // --- 3. Filter Options Populator ---
+    function renderSubjectDropdownFilters() {
+      const subjectSelect = document.getElementById('filterSubject');
+      const subjectDatalist = document.getElementById('subjectSuggestions');
+      
+      const currentSelected = subjectSelect.value;
+      const uniqueSubjects = [...new Set(appState.logs.map(l => l.subject))].sort();
+
+      // Clear & populate select options
+      subjectSelect.innerHTML = `<option value="ALL">All Subjects</option>`;
+      subjectDatalist.innerHTML = '';
+
+      uniqueSubjects.forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub;
+        opt.innerText = sub;
+        subjectSelect.appendChild(opt);
+
+        const dataOpt = document.createElement('option');
+        dataOpt.value = sub;
+        subjectDatalist.appendChild(dataOpt);
+      });
+
+      if (uniqueSubjects.includes(currentSelected)) {
+        subjectSelect.value = currentSelected;
+      }
+    }
+
+    // --- 4. Render Table Logs ---
+    function renderLogTable() {
+      const tbody = document.getElementById('logTableBody');
+      const emptyState = document.getElementById('emptyLogState');
+      tbody.innerHTML = '';
+
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const subjectFilter = document.getElementById('filterSubject').value;
+      const dateRangeFilter = document.getElementById('filterDateRange').value;
+
+      // Filter Logic
+      const now = new Date();
+      let filtered = appState.logs.filter(log => {
+        // Search term
+        const matchesSearch = log.subject.toLowerCase().includes(searchTerm) || 
+                              log.topic.toLowerCase().includes(searchTerm) ||
+                              (log.notes && log.notes.toLowerCase().includes(searchTerm));
+        
+        // Subject filter
+        const matchesSubject = subjectFilter === 'ALL' || log.subject === subjectFilter;
+
+        // Date range filter
+        let matchesDate = true;
+        if (dateRangeFilter !== 'ALL') {
+          const limitDays = parseInt(dateRangeFilter);
+          const logDate = new Date(log.date);
+          const diffDays = (now - logDate) / (1000 * 60 * 60 * 24);
+          matchesDate = diffDays <= limitDays;
+        }
+
+        return matchesSearch && matchesSubject && matchesDate;
+      });
+
+      // Sort logs newest date first
+      filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      filtered.forEach(log => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-colors border-b border-slate-100 dark:border-slate-700/40';
+
+        const hrs = Math.floor(log.durationMinutes / 60);
+        const mins = log.durationMinutes % 60;
+        const durationFormatted = `${hrs > 0 ? hrs + 'h ' : ''}${mins}m`;
+
+        tr.innerHTML = `
+          <td class="px-5 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">${formatDisplayDate(log.date)}</td>
+          <td class="px-5 py-4">
+            <span class="inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 mb-1">
+              ${escapeHtml(log.subject)}
+            </span>
+            <div class="text-xs text-slate-600 dark:text-slate-300 font-medium">${escapeHtml(log.topic)}</div>
+          </td>
+          <td class="px-5 py-4 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">${durationFormatted}</td>
+          <td class="px-5 py-4 whitespace-nowrap">
+            <div class="flex items-center space-x-1 text-amber-500">
+              ${'★'.repeat(log.focus || 3)}<span class="text-xs text-slate-400 font-normal ml-1">(${log.focus || 3}/5)</span>
+            </div>
+          </td>
+          <td class="px-5 py-4 text-xs text-slate-500 dark:text-slate-400 max-w-xs truncate">
+            ${log.notes ? escapeHtml(log.notes) : '<span class="italic text-slate-400">No notes</span>'}
+          </td>
+          <td class="px-5 py-4 text-right space-x-2 whitespace-nowrap">
+            <button onclick="editLogEntry('${log.id}')" class="p-1.5 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Edit">
+              <i data-lucide="pencil" class="w-4 h-4"></i>
+            </button>
+            <button onclick="deleteLogEntry('${log.id}')" class="p-1.5 text-slate-500 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title="Delete">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      lucide.createIcons();
+    }
+
+    // --- 5. Render Chart Visualizers ---
+    function renderCharts() {
+      const isDark = appState.theme === 'dark';
+      const textColor = isDark ? '#cbd5e1' : '#475569';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.05)';
+
+      // 5a. Subject Breakdown (Doughnut Chart)
+      const subjectTotals = {};
+      appState.logs.forEach(l => {
+        subjectTotals[l.subject] = (subjectTotals[l.subject] || 0) + (l.durationMinutes / 60);
+      });
+
+      const subjectLabels = Object.keys(subjectTotals);
+      const subjectData = Object.values(subjectTotals);
+
+      const ctxSubject = document.getElementById('subjectChart').getContext('2d');
+      if (subjectChartInstance) subjectChartInstance.destroy();
+
+      subjectChartInstance = new Chart(ctxSubject, {
+        type: 'doughnut',
+        data: {
+          labels: subjectLabels.length ? subjectLabels : ['No Data'],
+          datasets: [{
+            data: subjectData.length ? subjectData : [1],
+            backgroundColor: [
+              '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6'
+            ],
+            borderWidth: 2,
+            borderColor: isDark ? '#1e293b' : '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: textColor, padding: 15, font: { family: 'Inter', size: 12 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.label}: ${ctx.raw.toFixed(1)} hrs`
+              }
+            }
+          }
+        }
+      });
+
+      // 5b. 7-Day Trend (Bar Chart)
+      const last7Days = [];
+      const trendData = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        
+        // Day Label (e.g. Mon, Tue)
+        const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+        last7Days.push(dayLabel);
+
+        const totalMin = appState.logs
+          .filter(l => l.date === dateStr)
+          .reduce((sum, l) => sum + Number(l.durationMinutes), 0);
+        trendData.push((totalMin / 60).toFixed(1));
+      }
+
+      const ctxTrend = document.getElementById('trendChart').getContext('2d');
+      if (trendChartInstance) trendChartInstance.destroy();
+
+      trendChartInstance = new Chart(ctxTrend, {
+        type: 'bar',
+        data: {
+          labels: last7Days,
+          datasets: [{
+            label: 'Study Hours',
+            data: trendData,
+            backgroundColor: '#6366f1',
+            borderRadius: 8,
+            hoverBackgroundColor: '#4f46e5'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: textColor, font: { family: 'Inter' } }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { family: 'Inter' } }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => ` ${ctx.raw} hours studied`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // --- Live Timer Logic ---
+    function setupTimer() {
+      const modePomoBtn = document.getElementById('modePomo');
+      const modeStopwatchBtn = document.getElementById('modeStopwatch');
+
+      modePomoBtn.addEventListener('click', () => {
+        switchTimerMode('pomodoro');
+        modePomoBtn.className = 'px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all';
+        modeStopwatchBtn.className = 'px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all';
+      });
+
+      modeStopwatchBtn.addEventListener('click', () => {
+        switchTimerMode('stopwatch');
+        modeStopwatchBtn.className = 'px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm transition-all';
+        modePomoBtn.className = 'px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 transition-all';
+      });
+
+      document.getElementById('startTimerBtn').addEventListener('click', startTimer);
+      document.getElementById('pauseTimerBtn').addEventListener('click', pauseTimer);
+      document.getElementById('resetTimerBtn').addEventListener('click', resetTimer);
+      document.getElementById('saveTimerLogBtn').addEventListener('click', saveTimerToLog);
+    }
+
+    function switchTimerMode(mode) {
+      pauseTimer();
+      timerState.mode = mode;
+      resetTimer();
+    }
+
+    function startTimer() {
+      if (timerState.isRunning) return;
+      timerState.isRunning = true;
+
+      document.getElementById('startTimerBtn').classList.add('hidden');
+      document.getElementById('pauseTimerBtn').classList.remove('hidden');
+
+      timerState.intervalId = setInterval(() => {
+        if (timerState.mode === 'pomodoro') {
+          timerState.secondsRemaining--;
+          updateTimerDisplay(timerState.secondsRemaining);
+
+          if (timerState.secondsRemaining <= 0) {
+            pauseTimer();
+            showToast('Pomodoro Session Complete! Great job!');
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          }
+        } else {
+          timerState.stopwatchSeconds++;
+          updateTimerDisplay(timerState.stopwatchSeconds);
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      timerState.isRunning = false;
+      clearInterval(timerState.intervalId);
+      document.getElementById('startTimerBtn').classList.remove('hidden');
+      document.getElementById('pauseTimerBtn').classList.add('hidden');
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      if (timerState.mode === 'pomodoro') {
+        timerState.secondsRemaining = 25 * 60;
+        updateTimerDisplay(25 * 60);
+        document.getElementById('timerSubtext').innerText = 'Focus Session (25 min)';
+      } else {
+        timerState.stopwatchSeconds = 0;
+        updateTimerDisplay(0);
+        document.getElementById('timerSubtext').innerText = 'Stopwatch Counter';
+      }
+    }
+
+    function updateTimerDisplay(totalSecs) {
+      const m = Math.floor(totalSecs / 60).toString().padStart(2, '0');
+      const s = (totalSecs % 60).toString().padStart(2, '0');
+      document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+    }
+
+    function saveTimerToLog() {
+      let elapsedMinutes = 0;
+      if (timerState.mode === 'pomodoro') {
+        elapsedMinutes = Math.round((25 * 60 - timerState.secondsRemaining) / 60);
+      } else {
+        elapsedMinutes = Math.round(timerState.stopwatchSeconds / 60);
+      }
+
+      if (elapsedMinutes < 1) {
+        showToast('Session too short to log (under 1 minute)');
+        return;
+      }
+
+      // Pre-fill Modal form with elapsed time
+      document.getElementById('editLogId').value = '';
+      document.getElementById('modalTitle').innerText = 'Log Completed Session';
+      document.getElementById('logHours').value = Math.floor(elapsedMinutes / 60);
+      document.getElementById('logMinutes').value = elapsedMinutes % 60;
+      
+      openModal('logModal');
+    }
+
+    // --- Event Listeners Initialization ---
+    function setupEventListeners() {
+      // Theme Toggle
+      document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
+
+      // Data Menu Dropdown
+      const dataMenuBtn = document.getElementById('dataMenuBtn');
+      const dataDropdown = document.getElementById('dataDropdown');
+      
+      dataMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dataDropdown.classList.toggle('hidden');
+      });
+
+      document.addEventListener('click', () => {
+        dataDropdown.classList.add('hidden');
+      });
+
+      // Export / Import / Clear Data Actions
+      document.getElementById('exportBtn').addEventListener('click', exportDataJson);
+      document.getElementById('importInput').addEventListener('change', importDataJson);
+      document.getElementById('clearDataBtn').addEventListener('click', resetAllData);
+
+      // Log Modal Triggers
+      document.getElementById('openLogModalBtn').addEventListener('click', () => {
+        document.getElementById('editLogId').value = '';
+        document.getElementById('logForm').reset();
+        setDefaultDate();
+        document.getElementById('modalTitle').innerText = 'Log Study Session';
+        openModal('logModal');
+      });
+
+      document.getElementById('closeLogModalBtn').addEventListener('click', () => closeModal('logModal'));
+      document.getElementById('cancelLogModalBtn').addEventListener('click', () => closeModal('logModal'));
+      document.getElementById('logForm').addEventListener('submit', handleLogFormSubmit);
+
+      // Focus Rating Slider Sync
+      const focusInput = document.getElementById('logFocus');
+      const focusBadge = document.getElementById('focusRatingBadge');
+      focusInput.addEventListener('input', () => {
+        focusBadge.innerText = `${focusInput.value} / 5`;
+      });
+
+      // Goals Modal Triggers
+      document.getElementById('editGoalsBtn').addEventListener('click', () => {
+        document.getElementById('targetDailyHours').value = appState.targets.daily;
+        document.getElementById('targetWeeklyHours').value = appState.targets.weekly;
+        openModal('goalsModal');
+      });
+
+      document.getElementById('closeGoalsModalBtn').addEventListener('click', () => closeModal('goalsModal'));
+      document.getElementById('cancelGoalsModalBtn').addEventListener('click', () => closeModal('goalsModal'));
+      document.getElementById('goalsForm').addEventListener('submit', handleGoalsFormSubmit);
+
+      // Table Search & Filter Listeners
+      document.getElementById('searchInput').addEventListener('input', renderLogTable);
+      document.getElementById('filterSubject').addEventListener('change', renderLogTable);
+      document.getElementById('filterDateRange').addEventListener('change', renderLogTable);
+
+      // Timer Setup
+      setupTimer();
+    }
+
+    // --- Modal Handler Helpers ---
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    // --- Log Form Submission (Create / Update) ---
+    function handleLogFormSubmit(e) {
+      e.preventDefault();
+
+      const editId = document.getElementById('editLogId').value;
+      const date = document.getElementById('logDate').value;
+      const subject = document.getElementById('logSubject').value.trim();
+      const topic = document.getElementById('logTopic').value.trim();
+      const hrs = parseInt(document.getElementById('logHours').value) || 0;
+      const mins = parseInt(document.getElementById('logMinutes').value) || 0;
+      const focus = parseInt(document.getElementById('logFocus').value);
+      const notes = document.getElementById('logNotes').value.trim();
+
+      const totalDurationMinutes = (hrs * 60) + mins;
+
+      if (totalDurationMinutes <= 0) {
+        showToast('Please enter a valid study duration');
+        return;
+      }
+
+      if (editId) {
+        // Edit existing
+        const index = appState.logs.findIndex(l => l.id === editId);
+        if (index !== -1) {
+          appState.logs[index] = { id: editId, date, subject, topic, durationMinutes: totalDurationMinutes, focus, notes };
+          showToast('Study session updated successfully!');
+        }
+      } else {
+        // Create new
+        const newLog = {
+          id: Date.now().toString(),
+          date,
+          subject,
+          topic,
+          durationMinutes: totalDurationMinutes,
+          focus,
+          notes
+        };
+        appState.logs.push(newLog);
+        showToast('New study session logged!');
+
+        // Check if daily target was just achieved
+        checkGoalCompletionCelebration();
+      }
+
+      saveDataToLocalStorage();
+      renderAll();
+      closeModal('logModal');
+      document.getElementById('logForm').reset();
+    }
+
+    // Goal Completion Confetti Celebration
+    function checkGoalCompletionCelebration() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayMinutes = appState.logs
+        .filter(l => l.date === todayStr)
+        .reduce((sum, l) => sum + Number(l.durationMinutes), 0);
+      const todayHours = todayMinutes / 60;
+
+      if (todayHours >= appState.targets.daily) {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.5 }
+        });
+        showToast('🎉 Daily Target Reached! Outstanding work!');
+      }
+    }
+
+    // --- Edit & Delete Single Entries ---
+    window.editLogEntry = function(id) {
+      const log = appState.logs.find(l => l.id === id);
+      if (!log) return;
+
+      document.getElementById('editLogId').value = log.id;
+      document.getElementById('logDate').value = log.date;
+      document.getElementById('logSubject').value = log.subject;
+      document.getElementById('logTopic').value = log.topic;
+      document.getElementById('logHours').value = Math.floor(log.durationMinutes / 60);
+      document.getElementById('logMinutes').value = log.durationMinutes % 60;
+      document.getElementById('logFocus').value = log.focus || 4;
+      document.getElementById('focusRatingBadge').innerText = `${log.focus || 4} / 5`;
+      document.getElementById('logNotes').value = log.notes || '';
+
+      document.getElementById('modalTitle').innerText = 'Edit Study Session';
+      openModal('logModal');
+    };
+
+    window.deleteLogEntry = function(id) {
+      if (confirm('Are you sure you want to delete this study session log?')) {
+        appState.logs = appState.logs.filter(l => l.id !== id);
+        saveDataToLocalStorage();
+        renderAll();
+        showToast('Study session deleted');
+      }
+    };
+
+    // --- Goals Form Submission ---
+    function handleGoalsFormSubmit(e) {
+      e.preventDefault();
+      const daily = parseFloat(document.getElementById('targetDailyHours').value);
+      const weekly = parseFloat(document.getElementById('targetWeeklyHours').value);
+
+      appState.targets = { daily, weekly };
+      saveDataToLocalStorage();
+      renderGoals();
+      closeModal('goalsModal');
+      showToast('Target goals updated');
+    }
+
+    // --- Data Export & Import Functions ---
+    function exportDataJson() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      const dateStr = new Date().toISOString().split('T')[0];
+      
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `StudyPulse_Backup_${dateStr}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showToast('Study data exported successfully!');
+    }
+
+    function importDataJson(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (importedData && (importedData.logs || importedData.targets)) {
+            appState = {
+              logs: importedData.logs || [],
+              targets: importedData.targets || { daily: 4, weekly: 25 },
+              theme: importedData.theme || 'dark'
+            };
+
+            saveDataToLocalStorage();
+            initializeTheme();
+            renderAll();
+            showToast('Data imported successfully!');
+          } else {
+            showToast('Invalid JSON backup file format');
+          }
+        } catch (err) {
+          console.error(err);
+          showToast('Failed to parse uploaded JSON file');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetAllData() {
+      if (confirm('WARNING: This will erase all recorded study logs and reset settings. Do you wish to continue?')) {
+        appState.logs = [];
+        appState.targets = { daily: 4, weekly: 25 };
+        saveDataToLocalStorage();
+        renderAll();
+        showToast('All app data has been reset');
+      }
+    }
+
+    // --- Helper Utilities ---
+    function formatDisplayDate(dateString) {
+      const options = { month: 'short', day: 'numeric', year: 'numeric' };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').innerText = message;
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

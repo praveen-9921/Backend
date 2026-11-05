@@ -1,0 +1,105 @@
+1. First, understand how the internet works
+Imagine you open a website:
+
+www.example.com
+
+What happens behind the scenes?
+1. You open the website in your browser.
+2. Your browser sends a request to a server.
+3. The server receives your request.
+4. The server processes it.
+5. The server sends a response.
+6. Your browser displays the result.
+This communication happens using a protocol called HTTP.
+
+HTTP stands for HyperText Transfer Protocol.
+
+
+2. What are client and server?
+
+There are two important parts:
+
+Client: The application making a request. For example:
+- Chrome browser
+- Mobile application
+- Frontend website
+
+Server: The application that receives requests and provides responses.
+
+
+
+3. Understanding HTTP request and response
+Whenever a client communicates with a server, two things are involved.
+HTTP Request
+A request contains information such as:
+Part	    Example
+Method	    GET
+URL	        /users
+Headers	    Content-Type
+Body	    User information
+
+HTTP Response
+The server sends back:
+Part	    Example
+Status      code	200
+Headers	    Content-Type
+Body	    User data
+
+
+Let's understand HTTP methods first.
+Method	    Purpose
+GET	        Get or read information
+POST	    Create new information
+PUT	        Replace existing information
+PATCH	    Update part of existing information
+DELETE	    Delete information
+
+
+
+
+
+4. What are HTTP status codes?
+Status codes tell the client what happened to its request.
+
+Some important ones:
+Code	Meaning
+200	    OK — successful request
+201	    Created — new resource created
+400	    Bad Request
+401	    Unauthorized
+403	    Forbidden
+404	    Not Found
+500	    Internal Server Error.
+
+
+
+res.setHeader() : This tells the client that we're sending JSON data.
+res.setHeader("Content-Type", "application/json");
+
+
+
+JSON.stringify() :
+This converts a JavaScript object into a JSON string, which we can send as the response.
+
+This is an important concept because backend APIs commonly exchange JSON data
+
+
+
+
+
+
+9. Day 5 revision
+Let's quickly recap what you learned today.
+Concept	                What it does
+HTTP	                Communication between client and server
+Client	                Sends requests
+Server	                Receives requests and sends responses
+Request (req)	        Contains incoming request information
+Response (res)	        Used to send information back
+http.createServer()	    Creates an HTTP server
+server.listen()	        Starts the server
+res.write()	            Writes response data
+res.end()	            Finishes the response
+req.url	                Gets requested URL
+req.method	            Gets HTTP method
+JSON.stringify()	    Converts object to JSON string
