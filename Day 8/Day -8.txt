@@ -1,0 +1,39 @@
+1. What is a POST request?
+Imagine you're creating a shopping website.
+
+A customer fills out a registration form:
+- Name: Praveen
+- Email: praveen@gmail.com
+- Password: 123456
+When the customer clicks Register, the browser sends this information to the server.
+
+This is commonly done using an HTTP POST request.
+
+Remember:
+- GET → Retrieve data.
+- POST → Send data to the server, commonly to create something new.
+
+
+Here:
+- app.post() handles POST requests.
+- /register is the route.
+- req contains information about the incoming request.
+- res sends a response to the client.
+
+But there's one problem: How do we access the name, email, and password sent by the customer?
+
+That's where req.body comes in.
+
+
+3. Understanding req.body
+req.body contains the data sent by the client in the request body.
+
+However, Express needs middleware to understand incoming JSON data.
+
+
+Let's understand the important parts:
+- app.use(express.json()) — middleware that parses JSON request bodies.
+- req.body.name — reads the name sent by the client.
+- req.body.email — reads the email sent by the client.
+- res.status(201) — sends the Created status code.
+- res.json() — sends a JSON response.
