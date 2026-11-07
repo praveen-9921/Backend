@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: aliceblue;
+            display: flex;
+            justify-content: center;
+            margin-top: 35vh;
+        }
+
+        .form {
+            width: 500px;
+            height: auto;
+            border: 2px solid black;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin: 30px;
+
+        }
+
+        form label {
+            font-size: 30px;
+        }
+
+        form input {
+            height: 30px;
+            border: 3px solid red;
+            /* margin: 10px; */
+            border-radius: 5px;
+        }
+
+        button {
+            width: 200px;
+            height: auto;
+            font-size: 30px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form">
+        <h1>Sign Up</h1>
+        <form id="signupForm">
+            <label for="name">Name : </label>
+            <input type="text" name="name" id="name"><br>
+
+            <label for="email">Email : </label>
+            <input type="email" name="email" id="email"><br>
+
+            <label for="password">Password : </label>
+            <input type="password" name="password" id="password">
+
+            <button type="submit">Submit</button>
+            <button type="reset">Reset</button>
+        </form>
+    </div>
+
+
+    <p id="message"></p>
+
+    <script src="./script.js"></script>
+</body>
+
+</html>

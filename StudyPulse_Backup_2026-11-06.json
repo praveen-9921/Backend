@@ -62,6 +62,15 @@
       "durationMinutes": 120,
       "focus": 4,
       "notes": "Express Routes, Route Parameters & Query Parameters"
+    },
+    {
+      "id": "1793986217777",
+      "date": "2026-11-06",
+      "subject": "Backend",
+      "topic": "POST",
+      "durationMinutes": 120,
+      "focus": 4,
+      "notes": "Handling POST Requests & Request Body in Express.js"
     }
   ],
   "targets": {
