@@ -1,0 +1,194 @@
+[
+  {
+    "id": 101,
+    "name": "Samsung Galaxy S25",
+    "brand": "Samsung",
+    "category": "Mobile",
+    "price": 79999,
+    "stock": 15
+  },
+  {
+    "id": 102,
+    "name": "Samsung Galaxy S25 ultra",
+    "brand": "Samsung",
+    "category": "Mobile",
+    "price": 159999,
+    "stock": 12
+  },
+  {
+    "id": 103,
+    "name": "Redmi Note 24",
+    "brand": "Xiamoi",
+    "category": "Mobile",
+    "price": 25999,
+    "stock": 10
+  },
+  {
+    "id": 104,
+    "name": "Bed",
+    "brand": "Sleepwell",
+    "category": "Wood",
+    "price": 9999,
+    "stock": 5
+  },
+  {
+    "id": 105,
+    "name": "Boat neo",
+    "brand": "Boat",
+    "category": "Watch",
+    "price": 2999,
+    "stock": 15
+  },
+  {
+    "id": 106,
+    "name": "Samsung Galaxy S26",
+    "brand": "Samsung",
+    "category": "Mobile",
+    "price": 99999,
+    "stock": 15
+  },
+  {
+    "id": 107,
+    "name": "iPhone 17",
+    "brand": "Apple",
+    "category": "Mobile",
+    "price": 82900,
+    "stock": 20
+  },
+  {
+    "id": 108,
+    "name": "iPhone 17 Pro",
+    "brand": "Apple",
+    "category": "Mobile",
+    "price": 134900,
+    "stock": 8
+  },
+  {
+    "id": 109,
+    "name": "Dell Inspiron 15",
+    "brand": "Dell",
+    "category": "Laptop",
+    "price": 58999,
+    "stock": 12
+  },
+  {
+    "id": 110,
+    "name": "MacBook Air M4",
+    "brand": "Apple",
+    "category": "Laptop",
+    "price": 99900,
+    "stock": 6
+  },
+  {
+    "id": 111,
+    "name": "Sony WH-1000XM5",
+    "brand": "Sony",
+    "category": "Headphones",
+    "price": 24990,
+    "stock": 9
+  },
+  {
+    "id": 112,
+    "name": "Boat Rockerz 450",
+    "brand": "Boat",
+    "category": "Headphones",
+    "price": 1499,
+    "stock": 25
+  },
+  {
+    "id": 113,
+    "name": "Samsung Galaxy Watch 7",
+    "brand": "Samsung",
+    "category": "Watch",
+    "price": 22999,
+    "stock": 11
+  },
+  {
+    "id": 114,
+    "name": "Noise ColorFit Pro 5",
+    "brand": "Noise",
+    "category": "Watch",
+    "price": 3999,
+    "stock": 18
+  },
+  {
+    "id": 115,
+    "name": "Wooden Study Table",
+    "brand": "Wakefit",
+    "category": "Furniture",
+    "price": 6999,
+    "stock": 7
+  },
+  {
+    "id": 116,
+    "name": "Office Chair",
+    "brand": "Green Soul",
+    "category": "Furniture",
+    "price": 8999,
+    "stock": 10
+  },
+  {
+    "id": 117,
+    "name": "LG 43-inch Smart TV",
+    "brand": "LG",
+    "category": "Television",
+    "price": 32999,
+    "stock": 5
+  },
+  {
+    "id": 118,
+    "name": "Samsung 55-inch Smart TV",
+    "brand": "Samsung",
+    "category": "Television",
+    "price": 52999,
+    "stock": 4
+  },
+  {
+    "id": 119,
+    "name": "Canon EOS R50",
+    "brand": "Canon",
+    "category": "Camera",
+    "price": 67999,
+    "stock": 3
+  },
+  {
+    "id": 120,
+    "name": "Logitech G102",
+    "brand": "Logitech",
+    "category": "Accessories",
+    "price": 1295,
+    "stock": 30
+  },
+  {
+    "id": 121,
+    "name": "Kingston 1TB SSD",
+    "brand": "Kingston",
+    "category": "Storage",
+    "price": 6499,
+    "stock": 14
+  },
+  {
+    "id": 122,
+    "name": "OnePlus 13",
+    "brand": "OnePlus",
+    "category": "Mobile",
+    "price": 69999,
+    "stock": 10
+  },
+  {
+    "id": 123,
+    "name": "iPhone 18",
+    "brand": "Apple",
+    "category": "Mobile",
+    "price": 89999,
+    "stock": 10
+  },
+  {
+    "id": 124,
+    "name": "iPhone 16",
+    "brand": "Apple",
+    "category": "Mobile",
+    "price": 89999,
+    "stock": 10
+  }
+]
